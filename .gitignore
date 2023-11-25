@@ -166,7 +166,11 @@ cython_debug/
 
 
 .DS_Store
+**/.DS_Store
 
 ./sample/
 node_modules
 **/node_modules
+
+.aws-sam
+**/.aws-sam

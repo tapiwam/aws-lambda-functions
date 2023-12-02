@@ -15,6 +15,8 @@ provider:
   environment:
     THUMBNAIL_SIZE: 128
     REGION_NAME: ${self:provider.region}
+    DYNAMODB_TABLE: ${self:custom.dynamoTable}
+    THUMBNAIL_BUCKET: ${self:custom.bucket}
   
   iam:
     role:
@@ -23,11 +25,24 @@ provider:
         - Effect: Allow
           Action: 's3:*'
           Resource: '*'
+        - Effect: Allow
+          Action: 
+            - 'dynamodb:Query'
+            - 'dynamodb:PutItem'
+            - 'dynamodb:DeleteItem'
+            - 'dynamodb:Scan'
+            - 'dynamodb:GetItem'
+            - 'dynamodb:UpdateItem'
+            - 'dynamodb:BatchWriteItem'
+            - 'dynamodb:BatchGetItem'
+            - 'dynamodb:DescribeTable'
+          Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}'
 
 custom:
   bucket: tmaruni-thumbnails
   pythonRequirements:
     dockerizePip: true
+  dynamoTable: img-url-table
 
 functions:
   s3_thumbnail_generator:
@@ -45,3 +60,19 @@ functions:
 
 plugins:
   - serverless-python-requirements
+
+resources:
+  Resources:
+    ImagesDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

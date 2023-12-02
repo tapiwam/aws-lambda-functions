@@ -1,0 +1,8 @@
+
+# Deploy just theh one function
+sls deploy function -f s3_thumbnail_generator
+
+
+# Remove all
+sls remove
+

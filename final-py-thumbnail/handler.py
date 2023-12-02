@@ -8,8 +8,16 @@ import json
 
 # Get S3 client
 s3 = boto3.client('s3')
+
+# Get Dynamo client
+dynamodb = boto3.resource('dynamodb', region_name=os.environ['REGION_NAME'])
+
 # Get thumbnail size from environment variable
 size = int(os.environ['THUMBNAIL_SIZE'])
+
+# Get Dynamo table
+dbtable = str(os.environ['DYNAMODB_TABLE'])
+
 
 def s3_thumbnail_generator(event, context):
 
@@ -31,11 +39,8 @@ def s3_thumbnail_generator(event, context):
 
         url = upload_to_s3(thumbnail, bucket, thumbnail_key, img_size)
 
-        body = {
-            "message": "Go Serverless v3.0! Your function executed successfully!",
-            "input": event,
-            "url": url
-        }
+        # Save thumbnail url to DynamoDB
+        body = s3_save_thumbnail_url_to_dynamodb(url, img_size)
 
         return {"statusCode": 200, "body": json.dumps(body)}
 
@@ -80,3 +85,27 @@ def upload_to_s3(image, bucket, key, image_size):
 
     # url = s3.generate_presigned_url('get_object', Params={'Bucket': bucket, 'Key': key})
     return url
+
+# function to save thumbnail url to dynamodb
+def s3_save_thumbnail_url_to_dynamodb(url_path, image_size):
+
+    toint = float(image_size*0.53)/1000    
+    table = dynamodb.Table(dbtable)
+    response = table.put_item(
+        Item={
+            'id': str(uuid.uuid4()),
+            'url': url_path,
+            'approxReducedSize': str(toint) + str(' KB'),
+            'createdAt': str(datetime.now().isoformat()),
+            'updatedAt': str(datetime.now().isoformat()),
+            'image_size': image_size
+        }
+    )
+
+    return {
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "application/json",
+        },
+        "body": json.dumps(response)
+    }

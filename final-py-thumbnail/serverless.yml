@@ -56,6 +56,35 @@ functions:
     layers:
       - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p311-Pillow:2
       # - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p311-boto3:4
+  list:
+    handler: handler.s3_get_thumbnail_urls
+    events:
+      - http:
+          path: images/all
+          method: GET
+          cors: true
+    layers:
+      - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p311-Pillow:2
+  get:
+    handler: handler.s3_get_thumbnail
+    events:
+      - http:
+          path: images/get/{id}
+          method: GET
+          cors: true
+    layers:
+      - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p311-Pillow:2
+  
+  delete:
+    handler: handler.s3_delete_thumbnail
+    events:
+      - http:
+          path: images/delete/{id}
+          method: DELETE
+          cors: true
+    layers:
+      - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p311-Pillow:2
+
 
 
 plugins:

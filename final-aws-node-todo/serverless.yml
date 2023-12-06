@@ -31,6 +31,37 @@ functions:
           path: /todos
           method: post
           cors: true
+  list:
+    handler: handler/listTodos.listTodos
+    events:
+      - http:
+          path: /todos
+          method: get
+          cors: true        
+
+  get:
+    handler: handler/getTodo.getTodo
+    events:
+      - http:
+          path: /todos/{id}
+          method: get
+          cors: true        
+
+  update:
+    handler: handler/updateTodo.updateTodo
+    events:
+      - http:
+          path: /todos/{id}
+          method: put
+          cors: true
+
+  delete:
+    handler: handler/deleteTodo.deleteTodo
+    events:
+      - http:
+          path: /todos/{id}
+          method: delete
+          cors: true
 
 resources:
   Resources:
@@ -38,10 +69,10 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
-          - AttributeName: userId
+          - AttributeName: id
             AttributeType: S
         KeySchema:
-          - AttributeName: userId
+          - AttributeName: id
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:custom.tableName}

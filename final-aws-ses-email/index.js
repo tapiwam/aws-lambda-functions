@@ -28,6 +28,11 @@ module.exports.handler = (event, context, callback) => {
         message: msg,
         input: event,
       }),
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
+      },
     };
 
     callback(new Error(msg), resp);
@@ -75,6 +80,11 @@ module.exports.handler = (event, context, callback) => {
           message: "Error sending email",
           error: error,
         }),
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "*",
+        },
       };
       callback(new Error(error), response);
     }
@@ -86,6 +96,11 @@ module.exports.handler = (event, context, callback) => {
       body: JSON.stringify({
         message: "Email sent",
       }),
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
+      },
     };
     callback(null, response);
   });

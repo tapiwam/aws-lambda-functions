@@ -1,0 +1,9 @@
+{
+  "name": "final-aws-ses-email",
+  "version": "1.0.0",
+  "description": "Lambda for contact form with SES email",
+  "author": "Tapiwa Maruni",
+  "dependencies": {
+    "@aws-sdk/client-ses": "^3.465.0"
+  }
+}

@@ -1,0 +1,26 @@
+org: tapiwam
+app: final-py-thumbnail
+service: final-aws-ses-email
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - ses:*
+          Resource: '*'
+
+functions:
+  create:
+    handler: index.handler
+    events:
+      - http:
+          method: POST
+          path: /contact-us
+          cors: true
+    environment:
+      REGION: us-east-1
